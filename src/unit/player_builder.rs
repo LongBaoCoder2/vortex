@@ -1,9 +1,10 @@
-use super::player::Player;
+use crate::{point::Point2d, unit::Player};
 
 #[derive(Debug, Default)]
 pub struct PlayerBuilder {
     health: u8,
     speed: f64,
+    position: Point2d<f64>,
 }
 
 impl PlayerBuilder {
@@ -22,10 +23,16 @@ impl PlayerBuilder {
         self
     }
 
+    pub fn position(mut self, position: Point2d<f64>) -> Self {
+        self.position = position;
+        self
+    }
+
     pub fn build(self) -> Player {
         Player {
             health: self.health,
             speed: self.speed,
+            position: self.position,
         }
     }
 }
