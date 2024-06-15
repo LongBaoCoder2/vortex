@@ -1,5 +1,5 @@
 // replace application with the name of your package
-use error_handling::game;
+use error_handling::{game, unit::Enemy};
 fn main() {
     let mut game = game::Game::builder()
         .player_starting_health(10)
@@ -12,4 +12,3 @@ fn main() {
         .build();
     game.run();
 }
-

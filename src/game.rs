@@ -9,7 +9,7 @@ pub struct Game {
 }
 
 impl Game {
-    #[allow(cippy::new_without_default)]
+    #[allow(clippy::new_without_default)]
     pub fn new() -> Self {
         Game::builder().build()
     }
@@ -41,7 +41,7 @@ pub struct GameBuilder {
 }
 
 impl GameBuilder {
-    #[allow(cippy::new_without_default)]
+    #[allow(clippy::new_without_default)]
     pub fn new() -> Self {
         Self {
             enemies: Vec::new(),
@@ -69,12 +69,12 @@ impl GameBuilder {
         self
     }
 
-    pub fn player_starting_speed(mut self, speed: f32) -> Self {
+    pub fn player_starting_speed(mut self, speed: f64) -> Self {
         self.player = self.player.speed(speed);
         self
     }
 
-    pub fn player_starting_health(mut self, health: u32) -> Self {
+    pub fn player_starting_health(mut self, health: u8) -> Self {
         self.player = self.player.health(health);
         self
     }
