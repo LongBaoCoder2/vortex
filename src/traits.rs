@@ -1,5 +1,5 @@
 use crate::point::Point2d;
-use num::traits::NumAssign;
+use num::{traits::NumAssign, NumCast};
 use rand::{
     distributions::{uniform::SampleUniform, Standard},
     prelude::Distribution,
@@ -23,4 +23,25 @@ where
         let position = Point2d::new(rng.gen_range(x_range), rng.gen_range(y_range));
         self.set_position(position);
     }
+}
+
+pub trait Movable<T>: Position<T>
+where
+    T: NumAssign + Copy + NumCast,
+{
+    const MAX_SPEED: f64 = 3.0;
+
+    const ACCELEBRATE: f64 = 0.2;
+
+    fn accelerate(&mut self);
+
+    fn decelerate(&mut self);
+
+    fn move_forward(&mut self);
+
+    fn forward_position(&self) -> Point2d<T>;
+
+    fn turn_left(&mut self) {}
+
+    fn turn_right(&mut self) {}
 }

@@ -7,7 +7,6 @@ use std::{fmt::Display, io::Write};
 use crossterm::style::Stylize;
 use num::{traits::NumAssign, NumCast};
 
-// this is only an example, modify it to your needs or remove entirely
 pub trait Draw<T: NumAssign + Copy + NumCast>: Position<T> + Display {
     fn draw(&self, buffer: &mut impl Write) {
         let position = self.position();

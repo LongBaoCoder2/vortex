@@ -1,4 +1,3 @@
-// replace application with the name of your package
 use project_b::{game, unit::Enemy};
 fn main() {
     let mut game = game::Game::builder()

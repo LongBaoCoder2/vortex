@@ -5,6 +5,7 @@ pub struct PlayerBuilder {
     health: u8,
     speed: f64,
     position: Point2d<f64>,
+    direction: Point2d<f64>,
 }
 
 impl PlayerBuilder {
@@ -28,11 +29,18 @@ impl PlayerBuilder {
         self
     }
 
+    pub fn direction(mut self, direction: Point2d<f64>) -> Self {
+        self.direction = direction;
+        self
+    }
+
     pub fn build(self) -> Player {
         Player {
             health: self.health,
             speed: self.speed,
             position: self.position,
+            direction: self.direction,
+            accelerate: 0.0,
         }
     }
 }
