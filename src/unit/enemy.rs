@@ -25,3 +25,9 @@ impl Position<f64> for Enemy {
         self.position = position;
     }
 }
+
+impl std::fmt::Display for Enemy {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "╦")
+    }
+}

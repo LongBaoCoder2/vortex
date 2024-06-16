@@ -32,3 +32,9 @@ impl Position<f64> for Player {
         self.position = position;
     }
 }
+
+impl std::fmt::Display for Player {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "↑")
+    }
+}

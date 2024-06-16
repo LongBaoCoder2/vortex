@@ -33,3 +33,11 @@ pub trait Draw<T: NumAssign + Copy + NumCast>: Position<T> + Display {
         .unwrap();
     }
 }
+
+impl Draw<u16> for Wall {}
+
+impl Draw<u16> for Collectible {}
+
+impl Draw<f64> for Enemy {}
+
+impl Draw<f64> for Player {}

@@ -1,5 +1,4 @@
-use crate::point::Point2d;
-use crate::traits::*;
+use crate::{point::Point2d, traits::*};
 
 #[derive(Debug, Default)]
 pub struct Wall {
@@ -21,5 +20,11 @@ impl Position<u16> for Wall {
 
     fn set_position(&mut self, position: Point2d<u16>) {
         self.position = position;
+    }
+}
+
+impl std::fmt::Display for Wall {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "▓")
     }
 }

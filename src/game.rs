@@ -1,7 +1,15 @@
+use std::{
+    io::{stdout, Stdout, Write},
+    time::{Duration, Instant},
+};
+
+use draw::Draw;
 use rand::rngs::ThreadRng;
 
 use crate::{
+    point::Point2d,
     traits::Position,
+    ui::*,
     unit::{Collectible, Enemy, Player, PlayerBuilder, Wall},
 };
 
@@ -15,6 +23,8 @@ pub struct Game {
     collectible: Collectible,
     player: Player,
     rng: ThreadRng,
+    ui: UI,
+    stdout: Stdout,
 }
 
 impl Game {
@@ -29,6 +39,8 @@ impl Game {
 
     // Test mod
     pub fn init(&mut self) {
+        self.ui.prepare();
+
         for i in 0..self.width {
             self.walls.push(Wall::new(i, 0));
             self.walls.push(Wall::new(i, self.height - 1));
@@ -36,7 +48,7 @@ impl Game {
 
         for i in 0..self.height {
             self.walls.push(Wall::new(0, i));
-            self.walls.push(Wall::new(0, self.width - 1));
+            self.walls.push(Wall::new(self.width - 1, i));
         }
 
         for _ in 0..self.n_random_walls {
@@ -63,29 +75,31 @@ impl Game {
         }
     }
 
+    pub fn draw(&mut self) {
+        let mut buffer = Vec::new();
+
+        self.walls.iter().for_each(|wall| wall.draw(&mut buffer));
+        self.enemies
+            .iter()
+            .for_each(|enemy| enemy.draw(&mut buffer));
+        self.collectible.draw(&mut buffer);
+        self.player.draw(&mut buffer);
+        self.stdout
+            .write_all(&buffer)
+            .expect("Error: Failed to draw buffer to stdout");
+        self.stdout.flush().expect("Error: Failed to flush stdout");
+    }
+
     pub fn run(&mut self) {
         self.init();
-        // print positions
-        println!(
-            "Player: x = {}, y = {}",
-            self.player.position().x,
-            self.player.position().y
-        );
-        println!(
-            "Collectible: x = {}, y = {}",
-            self.collectible.position().x,
-            self.collectible.position().y
-        );
-        for enemy in &self.enemies {
-            println!(
-                "Enemy: x = {}, y = {}",
-                enemy.position().x,
-                enemy.position().y
-            );
+
+        let start_time = Instant::now();
+        while Instant::now() - start_time < Duration::from_secs(4) {
+            self.draw();
+            std::thread::sleep(Duration::from_millis(100));
         }
-        for wall in &self.walls {
-            println!("Wall: x = {}, y = {}", wall.position().x, wall.position().y);
-        }
+
+        self.ui.restore();
     }
 }
 
@@ -127,6 +141,8 @@ impl GameBuilder {
             collectible: Collectible::default(),
             player: self.player_builder.build(),
             rng: rand::thread_rng(),
+            ui: UI::new(),
+            stdout: stdout(),
         }
     }
 
@@ -162,6 +178,11 @@ impl GameBuilder {
 
     pub fn n_random_walls(mut self, n_random_walls: u16) -> Self {
         self.n_random_walls = n_random_walls;
+        self
+    }
+
+    pub fn player_starting_position(mut self, position: Point2d<f64>) -> Self {
+        self.player_builder = self.player_builder.position(position);
         self
     }
 }
