@@ -33,9 +33,9 @@ where
 
     const ACCELEBRATE: f64 = 0.2;
 
-    fn accelerate(&mut self);
+    fn accelerate(&mut self) {}
 
-    fn decelerate(&mut self);
+    fn decelerate(&mut self) {}
 
     fn move_forward(&mut self);
 

@@ -7,6 +7,7 @@ pub struct Player {
     pub health: u8,
     pub position: Point2d<f64>,
     pub direction: Point2d<f64>,
+    pub direction_head: u8,
 }
 
 impl Player {
@@ -36,11 +37,11 @@ impl Position<f64> for Player {
 
 impl Movable<f64> for Player {
     fn accelerate(&mut self) {
-        self.speed += Player::ACCELEBRATE;
+        self.speed = (self.speed + Player::ACCELEBRATE).min(Player::MAX_SPEED);
     }
 
     fn decelerate(&mut self) {
-        self.speed -= Player::ACCELEBRATE;
+        self.speed = (self.speed + Player::ACCELEBRATE).max(0.0);
     }
 
     fn move_forward(&mut self) {
@@ -55,12 +56,25 @@ impl Movable<f64> for Player {
         )
     }
 
-    // Stop Here
     fn turn_left(&mut self) {
-        self.position.x
+        let (x, y) = (self.direction.x, self.direction.y);
+        self.position.x = (x - y) * 1.0 / (2.0 as f64).sqrt();
+        self.position.y = (x + y) * 1.0 / (2.0 as f64).sqrt();
+        match self.direction_head {
+            0 => self.direction_head = 7,
+            _ => self.direction_head -= 1,
+        }
     }
 
-    fn turn_right(&mut self) {}
+    fn turn_right(&mut self) {
+        let (x, y) = (self.direction.x, self.direction.y);
+        self.position.x = (x + y) * 1.0 / (2.0 as f64).sqrt();
+        self.position.y = (x - y) * 1.0 / (2.0 as f64).sqrt();
+        match self.direction_head {
+            7 => self.direction_head = 0,
+            _ => self.direction_head += 1,
+        }
+    }
 }
 
 impl std::fmt::Display for Player {

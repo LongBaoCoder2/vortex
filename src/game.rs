@@ -25,6 +25,8 @@ pub struct Game {
     rng: ThreadRng,
     ui: UI,
     stdout: Stdout,
+    update_interval: Duration,
+    score: u32,
 }
 
 impl Game {
@@ -90,16 +92,25 @@ impl Game {
         self.stdout.flush().expect("Error: Failed to flush stdout");
     }
 
+    pub fn update(&mut self) {}
+
     pub fn run(&mut self) {
         self.init();
 
-        let start_time = Instant::now();
-        while Instant::now() - start_time < Duration::from_secs(4) {
+        let mut quit = false;
+        while !quit && self.player.is_alive() {
+            let start_time = Instant::now();
+
+            while let Some(time_elapsed) = self.update_interval.checked_sub(start_time.elapsed()) {}
+
+            self.update();
             self.draw();
-            std::thread::sleep(Duration::from_millis(100));
         }
 
         self.ui.restore();
+
+        print!("\nGame over!");
+        println!("  Score: {}", self.score);
     }
 }
 
@@ -111,6 +122,7 @@ pub struct GameBuilder {
     enemies: Vec<Enemy>,
     walls: Vec<Wall>,
     player_builder: PlayerBuilder,
+    update_interval: Duration,
 }
 
 impl Default for Game {
@@ -129,6 +141,7 @@ impl GameBuilder {
             walls: Vec::new(),
             player_builder: PlayerBuilder::new(),
             n_random_walls: 10,
+            update_interval: Duration::from_millis(1000 / 60),
         }
     }
     pub fn build(self) -> Game {
@@ -143,7 +156,14 @@ impl GameBuilder {
             rng: rand::thread_rng(),
             ui: UI::new(),
             stdout: stdout(),
+            update_interval: self.update_interval,
+            score: 0,
         }
+    }
+
+    pub fn update_interval(mut self, update_interval: Duration) -> Self {
+        self.update_interval = update_interval;
+        self
     }
 
     pub fn walls(mut self, walls: Vec<Wall>) -> Self {

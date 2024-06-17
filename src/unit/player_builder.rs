@@ -40,7 +40,7 @@ impl PlayerBuilder {
             speed: self.speed,
             position: self.position,
             direction: self.direction,
-            accelerate: 0.0,
+            direction_head: 0,
         }
     }
 }
